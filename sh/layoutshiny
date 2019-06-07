@@ -1,0 +1,44 @@
+#!/bin/bash
+
+# Diretorio dos layouts shiny
+shiny="/home/$USER/Documentos/gitlab/randomstuff/layouts"
+
+# Função que cria uma pasta com os arquivos ui e server
+function mylayout {
+    echo "add ui.R"
+    cp "$shiny/$input/ui.R"  ui.R
+    # echo  "$shiny/default/ui.R"
+    echo "add server.R"
+    cp "$shiny/$input/server.R" server.R
+    echo "add global.R"
+    cp "$shiny/$input/global.R" global.R
+    echo "add www"
+    cp -a "$shiny/$input/www" www
+}
+
+# function bookdown {
+#     echo "Cria bookdown"
+#     cp -a "$shiny/$input/." .
+#     echo "Pronto \n\n\n"
+# }
+
+while :
+do
+    printf "\nLayout's Shiny & outras coisas:\n"
+    printf "Os arquivos vem com ui.R, server.R, global.R e www/styles.css\n\n"
+    # printf "Digite uma das opções abaixo: \n\n"
+    
+    printf "  default \n"
+    printf "  dashboard \n"
+    printf "\n\n\n (q) para sair\n\n"
+
+    read -p "Selecione uma das opções: " input
+    echo
+
+    case $input in
+        default) mylayout "$input" ;;
+        dashboard) mylayout "$input";;
+        q) break ;;
+        *) echo "Seleção inválida" ;;
+    esac
+done

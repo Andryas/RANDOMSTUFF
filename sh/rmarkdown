@@ -1,0 +1,5 @@
+#!/bin/bash
+
+file="$1"
+
+Rscript -e "rmarkdown::render('$file')"
