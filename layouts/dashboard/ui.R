@@ -3,8 +3,8 @@ library(shinydashboard)
 
 dashboardPage(
   dashboardHeader(),
-  dashboardSidebar(
-      includeCSS("styles.css"),
-  ),
-  dashboardBody()
+  dashboardSidebar(),
+  dashboardBody(
+      tags$head(tags$link(href = "www/styles.css"))
+  )
 )

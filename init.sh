@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Add path to script sh
-echo 'export PATH=$PATH:/home/$USER/Documentos/gitlab/randomstuff/sh/' >> ~/.bashrc
+echo 'export PATH=$PATH:/home/$USER/Documentos/github/RANDOMSTUFF/sh' >> ~/.bashrc
 
 # Install Steam
 sudo apt-get install steam -y

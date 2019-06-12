@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Diretorio dos layouts shiny
-shiny="/home/$USER/Documentos/gitlab/randomstuff/layouts"
+shiny="/home/$USER/Documentos/github/RANDOMSTUFF/layouts"
 
 # Função que cria uma pasta com os arquivos ui e server
 function mylayout {
