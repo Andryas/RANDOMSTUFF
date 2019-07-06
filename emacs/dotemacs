@@ -13,7 +13,7 @@
 (setq comment-empty-lines t)                 ;; Comment even in empty lines.
 (setq x-select-enable-clipboard t)           ;; Allow shared transfer area.
 (setq-default indent-tabs-mode nil)          ;; Spaces to indent.
-(setq-default fill-column 80)                ;; Column width.
+(setq-default fill-column 110)                ;; Column width.
 (setq-default auto-fill-function 'do-auto-fill) ;; Auto break long lines.
 
 ;; Open Emacs without start-up screen.
@@ -213,8 +213,9 @@
 (add-to-list 'auto-mode-alist '("\\.Rpres\\'"  . poly-markdown-mode))
 
 ;; Movement across chunks in Rmd files.
-(global-set-key (kbd "S-<f7>") 'polymode-previous-chunk)
-(global-set-key (kbd "S-<f8>") 'polymode-next-chunk)
+(global-set-key (kbd "S-<f7>") 'wz-polymode-previous-chunk)
+(global-set-key (kbd "S-<f8>") 'wz-polymode-next-chunk)
+(global-set-key (kbd "S-<f10>") 'wz-polymode-eval-R-chunk)
 
 
 ;; ESS - Emacs Speaks Statistics. ----------------------------------------------
@@ -328,7 +329,8 @@
 (defvar key-combo-ess-default
   '((">"  . (" > " " %>% "))
     ("<"  . (" < " " <- "))
-    ("%" . (" %*% " " % "))))
+    ("%" . (" %in% " " %*% " " % "))
+    ))
 
 (key-combo-define-hook '(ess-mode-hook inferior-ess-mode-hook)
                        'ess-key-combo-load-default
@@ -413,13 +415,13 @@
 ;; https://www.emacswiki.org/emacs/Sublimity
 ;; M-x package-install RET sublimity
 
-(require 'sublimity)
-(require 'sublimity-scroll)
-(require 'sublimity-map)
-(sublimity-mode 1)
-
-(setq sublimity-scroll-weight 10
-      sublimity-scroll-drift-length 5)
+;; (require 'sublimity)
+;; (require 'sublimity-scroll)
+;; (require 'sublimity-map)
+;; (sublimity-mode 1)
+;; 
+;; (setq sublimity-scroll-weight 10
+;;       sublimity-scroll-drift-length 5)
 
 ;; Multi-cursos ----------------------------------------------------------------
 (require 'multiple-cursors)
@@ -429,7 +431,43 @@
 (global-set-key (kbd "<C-S-up>")   'move-text-up)
 (global-set-key (kbd "<C-S-down>")   'move-text-down)
 
-;; ;; Chunk Rmd
-;; (add-hook
-;;  'markdown-mode-hook
-;;  (lambda () (local-set-key (kbd "C-c i") 'insert-chunk)))
+;; Chunk Rmd
+(add-hook
+ 'markdown-mode-hook
+ (lambda () (local-set-key (kbd "C-c i") 'wz-insert-chunk)))
+
+
+;;----------------------------------------------------------------------
+;; Add highlighting for certain keywords.
+
+;; http://lists.gnu.org/archive/html/emacs-orgmode/2010-09/txtb5ChQJCDny.txt
+;; http://emacs.1067599.n5.nabble.com/Adding-keywords-for-font-lock-experts-td95645.html
+(make-face 'bad-words)
+(set-face-attribute 'bad-words nil
+                    :foreground "White"
+                    :background "Firebrick")
+(make-face 'good-words)
+(set-face-attribute 'good-words nil
+                    :foreground "LightSeaGreen"
+                    :background "White")
+
+(dolist
+    (mode '(fundamental-mode emacs-lisp-mode lisp-mode org-mode
+            shell-mode sh-mode ess-mode polymode-mode python-mode
+            markdown-mode latex-mode TeX-mode))
+  (setq font-lock-keywords-case-fold-search t)
+  (font-lock-add-keywords
+   mode
+   '(("\\<\\(IMPORTANT\\|ATTENTION\\|NOTE\\|OBS\\|TODO\\|BAD\\|STOP\\)\\>"
+      0 'font-lock-warning-face t)
+     ("\\<\\(COMMENT\\|IMPROVE\\|REVIEW\\|TIP\\|REMEMBER\\|QUESTION\\|EXPLANATION\\|INTERESTING\\|HYPHOTESIS\\|CONCEPT\\)\\>"
+      0 'font-lock-constant-face t)
+     ("\\<\\(BUG\\|WARNING\\|DANGER\\|FIXME\\|ERROR\\)\\>"
+      0 'bad-words t)
+     ("@[[:alnum:]_.]+\\>" ;; @walmes, @param, @return
+      0 'font-lock-function-name-face t)
+     ("\\<\\(DONE\\|GOOD\\|SOLVED\\|AMAZING\\|COOL\\|NICE\\|BRILLIANT\\)\\>"
+      0 'good-words t))
+   ))
+
+;;----------------------------------------------------------------------
