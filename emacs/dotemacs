@@ -13,8 +13,8 @@
 (setq comment-empty-lines t)                 ;; Comment even in empty lines.
 (setq x-select-enable-clipboard t)           ;; Allow shared transfer area.
 (setq-default indent-tabs-mode nil)          ;; Spaces to indent.
-(setq-default fill-column 110)                ;; Column width.
-(setq-default auto-fill-function 'do-auto-fill) ;; Auto break long lines.
+(setq-default fill-column 80)                ;; Column width.
+;; (setq-default auto-fill-function 'do-auto-fill) ;; Auto break long lines.
 
 ;; Open Emacs without start-up screen.
 (setq inhibit-startup-screen t)
@@ -27,6 +27,8 @@
 (global-linum-mode 1)
 
 ;; Key bindings ----------------------------------------------------------------
+
+(global-unset-key "\M-w")
 
 ;; C-TAB to move the cursor between visible buffers.
 (global-set-key [(control tab)] 'other-window)
@@ -220,6 +222,10 @@
 
 ;; ESS - Emacs Speaks Statistics. ----------------------------------------------
 ;; http://ess.r-project.org/
+
+(require 'ess-site)
+(require 'ess-view)
+
 
 (setq-default ess-dialect "R")
 (setq-default inferior-R-args "--no-restore-history --no-save ")
@@ -453,21 +459,21 @@
 
 (dolist
     (mode '(fundamental-mode emacs-lisp-mode lisp-mode org-mode
-            shell-mode sh-mode ess-mode polymode-mode python-mode
+            shell-mode sh-mode polymode-mode python-mode ess-r-mode
             markdown-mode latex-mode TeX-mode))
   (setq font-lock-keywords-case-fold-search t)
   (font-lock-add-keywords
    mode
    '(("\\<\\(IMPORTANT\\|ATTENTION\\|NOTE\\|OBS\\|TODO\\|BAD\\|STOP\\)\\>"
       0 'font-lock-warning-face t)
-     ("\\<\\(COMMENT\\|IMPROVE\\|REVIEW\\|TIP\\|REMEMBER\\|QUESTION\\|EXPLANATION\\|INTERESTING\\|HYPHOTESIS\\|CONCEPT\\)\\>"
+     ("\\<\\(COMMENT\\|IMPROVE\\|REVIEW\\|TIP\\|STATUS\\)\\>"
       0 'font-lock-constant-face t)
      ("\\<\\(BUG\\|WARNING\\|DANGER\\|FIXME\\|ERROR\\)\\>"
       0 'bad-words t)
-     ("@[[:alnum:]_.]+\\>" ;; @walmes, @param, @return
+     ("@[[:alnum:]_.]+\\>" 
       0 'font-lock-function-name-face t)
      ("\\<\\(DONE\\|GOOD\\|SOLVED\\|AMAZING\\|COOL\\|NICE\\|BRILLIANT\\)\\>"
       0 'good-words t))
    ))
 
-;;----------------------------------------------------------------------
+
