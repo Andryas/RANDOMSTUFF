@@ -31,7 +31,8 @@
     nil)
   (if char
       (insert (make-string (- fill-column (current-column)) char))
-    (insert (make-string (- fill-column (current-column)) ?-))))
+    (insert (make-string (- fill-column (current-column)) ?-)))
+  )
 
 (defun wz-insert-rule-and-comment-3 ()
   "Insert a commented rule with 43 dashes (-). Useful to divide
@@ -46,15 +47,33 @@
     (if (< (current-column) column-middle)
         (insert (make-string (- column-middle (current-column)) ?-)))))
 
-;; Delete current line ---------------------------------------
-(defun delete-current-line ()
-  "Delete (not kill) the current line."
+;; Rmd Files -------------------------------------
+;; Insert a new (empty) chunk to R markdown.
+(defun wz-insert-chunk ()
+  "Insert chunk environment Rmd sessions."
   (interactive)
-  (save-excursion
-    (delete-region
-     (progn (forward-visible-line 0) (point))
-     (progn (forward-visible-line 1) (point)))))
+  (if (derived-mode-p 'ess-mode)
+      (insert "```\n\n```{r}\n")
+    (insert "```{r}\n\n```")
+    (forward-line -1)))
 
+;; Evals current R chunk.
+(defun wz-polymode-eval-R-chunk ()
+  "Evals all code in R chunks in a polymode document (Rmd files)."
+  (interactive)
+  (if (derived-mode-p 'ess-mode)
+      (let ((ptn (point))
+            (beg (progn
+                   (search-backward-regexp "^```{r.*}$" nil t)
+                   (forward-line 1)
+                   (line-beginning-position)))
+            (end (progn
+                   (search-forward-regexp "^```$" nil t)
+                   (forward-line -1)
+                   (line-end-position))))
+        (ess-eval-region beg end nil)
+        (goto-char ptn))
+    (message "ess-mode weren't detected.")))
 
 ;; Hotkeys ---------------------------------------------------
 (global-set-key (kbd "M--") 'wz-insert-rule-from-point-to-margin)
@@ -63,7 +82,13 @@
                 (lambda ()
                   (interactive)
                   (wz-insert-rule-from-point-to-margin ?=)))
-(global-set-key (kbd "C-d")   'delete-current-line)
 (global-set-key (kbd "M-;")   'comment-line-or-region)
+
+(add-hook
+ 'markdown-mode-hook
+ (lambda ()
+   (local-set-key (kbd "C-i")   'wz-insert-chunk)
+   (local-set-key (kbd "<f6>")    'wz-polymode-eval-R-chunk)))
+
 
 (provide 'funcs)
